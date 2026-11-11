@@ -1,6 +1,7 @@
 package com.edifika.communication.communication.application.internal.queryservices;
 
 import com.edifika.communication.communication.domain.model.aggregates.Announcement;
+import com.edifika.communication.communication.domain.model.entities.AnnouncementRead;
 import com.edifika.communication.communication.infrastructure.persistence.jpa.repositories.AnnouncementReadRepository;
 import com.edifika.communication.communication.infrastructure.persistence.jpa.repositories.AnnouncementRepository;
 import com.edifika.communication.communication.domain.services.CommunicationQueryService;
@@ -27,6 +28,11 @@ public class CommunicationQueryServiceImpl
     @Override
     public List<Announcement> getAnnouncementsByBuildingId(Long buildingId) {
         return announcementRepository.findByBuildingId(buildingId);
+    }
+
+    @Override
+    public List<AnnouncementRead> getReadsByUserId(Long userId) {
+        return announcementReadRepository.findByUserId(userId);
     }
 
     @Override

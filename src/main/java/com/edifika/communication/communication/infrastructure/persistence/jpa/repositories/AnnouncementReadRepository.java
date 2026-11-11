@@ -3,9 +3,13 @@ package com.edifika.communication.communication.infrastructure.persistence.jpa.r
 import com.edifika.communication.communication.domain.model.entities.AnnouncementRead;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface AnnouncementReadRepository extends JpaRepository<AnnouncementRead, Long> {
 
     long countByAnnouncementId(Long announcementId);
 
     boolean existsByAnnouncementIdAndUserId(Long announcementId, Long userId);
+
+    List<AnnouncementRead> findByUserId(Long userId);
 }

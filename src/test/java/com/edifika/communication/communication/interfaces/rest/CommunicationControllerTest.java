@@ -174,7 +174,7 @@ class CommunicationControllerTest {
                 mock(MarkAnnouncementAsReadResource.class);
 
         AnnouncementRead announcementRead =
-                mock(AnnouncementRead.class);
+                new AnnouncementRead(announcementId, 7L);
 
         when(commandService.markAnnouncementAsRead(announcementId, resource))
                 .thenReturn(announcementRead);
@@ -184,12 +184,31 @@ class CommunicationControllerTest {
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNull(response.getBody());
+        var body = (com.edifika.communication.communication.interfaces.rest.resources.AnnouncementReadResource) response.getBody();
+        assertNotNull(body);
+        assertEquals(announcementId, body.announcementId());
+        assertEquals(7L, body.userId());
+        assertNotNull(body.readAt());
 
         verify(commandService, times(1))
                 .markAnnouncementAsRead(announcementId, resource);
 
         verifyNoInteractions(queryService);
+    }
+
+    @Test
+    void shouldListReadsByUser() {
+
+        when(queryService.getReadsByUserId(7L))
+                .thenReturn(List.of(new AnnouncementRead(1L, 7L), new AnnouncementRead(2L, 7L)));
+
+        var response = communicationController.getReadsByUser(7L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(2, response.getBody().size());
+        assertEquals(2L, response.getBody().get(1).announcementId());
+
+        verifyNoInteractions(commandService);
     }
 
     @Test

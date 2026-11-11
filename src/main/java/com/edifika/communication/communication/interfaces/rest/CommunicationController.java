@@ -3,6 +3,7 @@ package com.edifika.communication.communication.interfaces.rest;
 import com.edifika.communication.communication.domain.services.CommunicationCommandService;
 import com.edifika.communication.communication.domain.services.CommunicationQueryService;
 import com.edifika.communication.communication.interfaces.rest.resources.*;
+import com.edifika.communication.communication.interfaces.rest.transform.AnnouncementReadResourceFromEntityAssembler;
 import com.edifika.communication.communication.interfaces.rest.transform.AnnouncementResourceFromEntityAssembler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -78,12 +79,27 @@ public class CommunicationController {
             @RequestBody MarkAnnouncementAsReadResource resource
     ) {
 
-        commandService.markAnnouncementAsRead(
+        var read = commandService.markAnnouncementAsRead(
                 announcementId,
                 resource
         );
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(
+                AnnouncementReadResourceFromEntityAssembler.toResourceFromEntity(read)
+        );
+    }
+
+    /** Anuncios que el usuario ya confirmó como leídos. */
+    @GetMapping("/reads")
+    public ResponseEntity<java.util.List<AnnouncementReadResource>> getReadsByUser(
+            @RequestParam Long userId
+    ) {
+        return ResponseEntity.ok(
+                queryService.getReadsByUserId(userId)
+                        .stream()
+                        .map(AnnouncementReadResourceFromEntityAssembler::toResourceFromEntity)
+                        .toList()
+        );
     }
 
     @PutMapping("/{announcementId}/archive")
